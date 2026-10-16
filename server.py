@@ -37,6 +37,7 @@ import uuid
 import random
 import hashlib
 import argparse
+import datetime
 import threading
 import urllib.parse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -82,7 +83,13 @@ DEFAULT_CONFIG = {
              "same_fp_click_max": 20,      # 同设备指纹 24h 点击上限
              "order_min_seconds_after_click": 3,   # 点击后 N 秒内下单判可疑
              "block_self_buy": True,       # 自推自买拦截
-             "auto_reject_score": 3},      # 风控分 >= 该值自动拒单
+             "auto_reject_score": 3,       # 风控分 >= 该值自动拒单
+             "ip_blacklist": [],           # IP 黑名单（后台可加）
+             "ua_block_keywords": ["bot", "spider", "crawl", "scrapy",
+                                   "python-requests", "curl", "wget", "httpclient"],
+             "min_orders_for_cvr": 8,      # 订单数达到该值才检测转化率
+             "cvr_max": 0.25,              # 推广员转化率上限（25%，正常 1-8%）
+             "same_day_order_max": 3},     # 单个推广员 24h 成交上限
 }
 
 
@@ -211,18 +218,40 @@ def log_risk(kind, detail, score, action, affiliate_id=None):
     save("risk", rows[-2000:])
 
 
-def risk_check(affiliate, order_payload, ip, fp, click_id=None):
-    """返回 (score, reasons, action)。action: allow / review / reject"""
+def risk_check(affiliate, order_payload, ip, fp, click_id=None, ua=""):
+    """返回 (score, reasons, action)。action: allow / review / reject
+
+    规则分四组，按分定动作：>=auto_reject_score 拒绝，>=1 人工复核，否则放行。
+    1) 身份类：自推自买、IP 黑名单、UA 爬虫特征
+    2) 频次类：同 IP/指纹 24h 点击、同 IP 历史反复下单、点击后秒下单
+    3) 行为类：单个推广员转化率畸高（>=8 单且 >25%）、24h 内集中下单 >=3 笔
+    4) 点击-下单链路：click_id 对不上 / 超时未转化（>72h）不计转化但也不加分
+    """
     cfg = (load("config") or {}).get("risk") or DEFAULT_CONFIG["risk"]
     score, reasons = 0, []
-    # 1) 自推自买：下单联系方式与推广员注册信息相同
+    # ---- 1) 身份类 ----
     if cfg.get("block_self_buy", True):
         contact = (order_payload.get("contact") or "").strip().lower()
         if contact and (contact == (affiliate.get("email") or "").lower()
                         or contact == (affiliate.get("phone") or "").lower()):
             score += 3
             reasons.append("自推自买：下单联系方式与推广员本人一致")
-    # 2) 高频点击：同 IP / 同指纹 24h
+    bl = [x.strip() for x in (cfg.get("ip_blacklist") or []) if x.strip()]
+    if ip and ip in bl:
+        score += 3
+        reasons.append("IP 在黑名单中：%s" % ip)
+    ua_l = (ua or "").lower()
+    if not ua_l:
+        score += 2
+        reasons.append("空 User-Agent（正常浏览器必带）")
+    else:
+        for kw in cfg.get("ua_block_keywords") or ["bot", "spider", "crawl", "scrapy",
+                                                   "python-requests", "curl", "wget", "httpclient"]:
+            if kw in ua_l:
+                score += 2
+                reasons.append("User-Agent 含爬虫特征：%s" % kw)
+                break
+    # ---- 2) 频次类 ----
     clicks = load("clicks")
     day = ts() - 86400
     def _c(rows):
@@ -243,13 +272,30 @@ def risk_check(affiliate, order_payload, ip, fp, click_id=None):
     if fp and fp_hits > cfg.get("same_fp_click_max", 20):
         score += 2
         reasons.append("同设备指纹 24h 点击 %d 次（阈值 %d）" % (fp_hits, cfg["same_fp_click_max"]))
-    # 3) 同一 IP/指纹 反复下单
     orders = load("orders")
     same_ip_orders = len([o for o in orders if o.get("ip") == ip])
     if same_ip_orders >= 5:
         score += 1
         reasons.append("该 IP 历史下单 %d 笔" % same_ip_orders)
-    # 4) 点击后秒下单
+    # ---- 3) 行为类：推广员维度 ----
+    aff_orders = [o for o in orders if o.get("affiliate_id") == affiliate["id"]
+                  and o.get("status") != "rejected"]
+    aff_clicks = [c for c in clicks if c.get("affiliate_id") == affiliate["id"]]
+    if len(aff_orders) >= cfg.get("min_orders_for_cvr", 8):
+        cvr = len(aff_orders) / float(max(len(aff_clicks), 1))
+        if cvr > cfg.get("cvr_max", 0.25):
+            score += 2
+            reasons.append("推广员转化率 %.0f%% 畸高（%d 单 / %d 点击，阈值 %.0f%%）" % (
+                cvr * 100, len(aff_orders), len(aff_clicks), cfg["cvr_max"] * 100))
+    day_orders = [o for o in orders
+                  if o.get("affiliate_id") == affiliate["id"]
+                  and o.get("status") != "rejected"
+                  and (o.get("t") or 0) >= day]
+    if len(day_orders) >= cfg.get("same_day_order_max", 3):
+        score += 1
+        reasons.append("该推广员 24h 内成交 %d 笔（阈值 %d）" % (
+            len(day_orders), cfg["same_day_order_max"]))
+    # ---- 4) 点击后秒下单 ----
     if click_id:
         cl = [c for c in clicks if c.get("id") == click_id]
         if cl:
@@ -410,6 +456,18 @@ class Handler(BaseHTTPRequestHandler):
                                                 "settled": money(sum(
                                                     o.get("commission", 0) for o in orders
                                                     if o.get("status") == "settled"))}})
+        if p == "/api/me-stats":
+            a = self._auth()
+            if not a:
+                return self._send(401, {"ok": False, "error": "未登录"})
+            return self._send(200, {"ok": True,
+                                    "stats": affiliate_stats(a),
+                                    "trend": affiliate_trend(a, 7)})
+        if p == "/api/materials":
+            a = self._auth()
+            if not a:
+                return self._send(401, {"ok": False, "error": "未登录"})
+            return self._send(200, {"ok": True, "items": materials(a)})
         if p == "/api/withdrawals":
             a = self._auth()
             if not a:
@@ -629,12 +687,13 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(404, {"ok": False, "error": "推广码无效"})
             ip = self._ip()
             fp = b.get("fp") or ""
-            score, reasons, action = risk_check(aff, b, ip, fp, b.get("click_id"))
+            score, reasons, action = risk_check(aff, b, ip, fp, b.get("click_id"),
+                                                self.headers.get("User-Agent", ""))
             month_orders = len([o for o in load("orders")
                                 if o.get("affiliate_id") == aff["id"]])
             commission, detail = calc_commission(plan, aff, month_orders)
             orders = load("orders")
-            o = {"id": "O" + uuid.uuid4().hex[:8], "ts": now(),
+            o = {"id": "O" + uuid.uuid4().hex[:8], "ts": now(), "t": ts(),
                  "affiliate_id": aff["id"], "affiliate_name": aff.get("name"),
                  "plan_id": plan["id"], "plan_title": plan.get("title"),
                  "amount": money(plan.get("price")), "commission": commission,
@@ -769,6 +828,84 @@ def admin_stats():
                                           if w.get("status") == "pending"))}
 
 
+def affiliate_stats(aff):
+    """推广员自己的数据：点击/UV/订单/转化率/风控拦截数。"""
+    clicks = [c for c in load("clicks") if c.get("affiliate_id") == aff["id"]]
+    orders = [o for o in load("orders") if o.get("affiliate_id") == aff["id"]]
+    valid = [o for o in orders if o.get("status") != "rejected"]
+    uv = len({c.get("fp") for c in clicks if c.get("fp")}) or len({c.get("ip") for c in clicks})
+    return {"clicks": len(clicks), "uv": uv,
+            "orders": len(valid), "rejected": len(orders) - len(valid),
+            "cvr": round(len(valid) / float(max(uv, 1)), 4),
+            "today_clicks": len([c for c in clicks if (c.get("t") or 0) >= ts() - 86400]),
+            "today_orders": len([o for o in valid if (o.get("t") or 0) >= ts() - 86400])}
+
+
+def affiliate_trend(aff, days=7):
+    """近 N 日点击/成交趋势，按本地日期分桶。"""
+    clicks = [c for c in load("clicks") if c.get("affiliate_id") == aff["id"]]
+    orders = [o for o in load("orders")
+              if o.get("affiliate_id") == aff["id"] and o.get("status") != "rejected"]
+    buckets = {}
+    for i in range(days):
+        d = (datetime.date.today() - datetime.timedelta(days=days - 1 - i)).isoformat()
+        buckets[d] = {"date": d, "clicks": 0, "orders": 0}
+    for c in clicks:
+        try:
+            t = int(c.get("t") or 0)
+        except Exception:
+            continue
+        if not t:
+            continue
+        d = datetime.date.fromtimestamp(t).isoformat()
+        if d in buckets:
+            buckets[d]["clicks"] += 1
+    for o in orders:
+        try:
+            t = int(o.get("t") or 0)
+        except Exception:
+            t = 0
+        if not t:
+            continue
+        d = datetime.date.fromtimestamp(t).isoformat()
+        if d in buckets:
+            buckets[d]["orders"] += 1
+    return list(buckets.values())
+
+
+def materials(aff):
+    """推广素材中心：每个卡品生成可直接复制的话术（朋友圈/社群/Twitter）。"""
+    plans = [p for p in load("plans") if p.get("active", True)]
+    links = {l.get("plan_id"): l for l in (aff.get("links") or [])}
+    out = []
+    for p in plans:
+        l = links.get(p["id"])
+        if not l:
+            continue
+        url = "%s/r/%s" % (BASE_URL, l["code"])
+        out.append({
+            "plan_id": p["id"], "title": p.get("title"), "url": url,
+            "texts": [
+                {"scene": "朋友圈",
+                 "text": "出国旅游/留学必备！%s，%s %s，%d天有效，落地即用不用换卡。"
+                         "我实测比机场买卡便宜一半，链接在这 👉 %s" % (
+                             p.get("title"), p.get("data_gb"), "GB",
+                             p.get("validity_days") or 0, url)},
+                {"scene": "社群",
+                 "text": "【实测推荐】%s（%s）\n· 区域：%s\n· 流量：%sGB\n· 有效期：%s 天\n"
+                         "· 价格：%.2f\n需要直接点：%s" % (
+                             p.get("title"), p.get("region"), p.get("region"),
+                             p.get("data_gb"), p.get("validity_days"),
+                             float(p.get("price") or 0), url)},
+                {"scene": "Twitter/X",
+                 "text": "Traveling? %s — %sGB, %s days, activate on arrival. "
+                         "Cheaper than airport kiosks. %s" % (
+                             p.get("title"), p.get("data_gb"),
+                             p.get("validity_days"), url)},
+            ]})
+    return out
+
+
 # ============================================================================
 # 前端页面（内联，不引任何 CDN，离线可用）
 # ============================================================================
@@ -798,6 +935,21 @@ button.r{background:#b91c1c;border-color:#b91c1c}
 .t-ok{color:#4ade80;border-color:#14532d}.t-warn{color:#fbbf24;border-color:#713f12}
 .t-bad{color:#f87171;border-color:#7f1d1d}.muted{color:#8b96ad;font-size:12px}
 a{color:#6ea8fe}pre{background:#0d1424;padding:10px;border-radius:6px;overflow:auto;font-size:12px}
+.chart{display:flex;gap:10px;align-items:flex-end;height:120px;padding-top:6px}
+.chart .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.chart .bar{width:100%;max-width:34px;background:#2563eb;border-radius:4px 4px 0 0;min-height:2px;position:relative}
+.chart .bar.o{background:#4ade80}
+.chart .lab{font-size:11px;color:#8b96ad}
+.chart .val{font-size:10px;color:#8b96ad}
+.legend{display:flex;gap:14px;font-size:12px;color:#8b96ad;margin-bottom:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}
+.mat{border:1px solid #1e2740;border-radius:8px;padding:10px 12px;margin-bottom:10px;background:#0d1424}
+.mat .scene{font-size:11px;color:#fbbf24;border:1px solid #713f12;border-radius:20px;padding:1px 8px;margin-right:8px}
+.mat pre{margin:8px 0 0;white-space:pre-wrap;word-break:break-all}
+#toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%);background:#14532d;color:#4ade80;
+border:1px solid #14532d;border-radius:8px;padding:9px 18px;font-size:13px;display:none;z-index:99}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.two{grid-template-columns:1fr}}
 """
 
 JS_AFF = """
@@ -806,14 +958,30 @@ async function api(p,o={}){o.headers=Object.assign({'Content-Type':'application/
  if(TOKEN)o.headers.Authorization='Bearer '+TOKEN;
  const r=await fetch(API+p,o);return r.json();}
 function el(id){return document.getElementById(id)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function toast(m){const t=el('toast');if(!t)return;t.textContent=m;t.style.display='block';
+ clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',1800);}
+function copy(t){if(navigator.clipboard&&navigator.clipboard.writeText){
+ navigator.clipboard.writeText(t).then(()=>toast('已复制'));}else{
+ const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);
+ a.select();document.execCommand('copy');a.remove();toast('已复制');}}
 async function login(){const r=await api('/login',{method:'POST',body:JSON.stringify(
  {email:el('le').value,password:el('lp').value})});
- if(r.ok){TOKEN=r.token;localStorage.setItem('sim_token',TOKEN);boot();}else alert(r.error||'失败');}
+ if(r.ok){TOKEN=r.token;localStorage.setItem('sim_token',TOKEN);boot();}else toast(r.error||'失败');}
 async function reg(){const r=await api('/register',{method:'POST',body:JSON.stringify(
  {name:el('rn').value,email:el('re').value,password:el('rp').value,phone:el('rph').value})});
- if(r.ok){TOKEN=r.token;localStorage.setItem('sim_token',TOKEN);boot();alert('注册成功：'+(r.note||''));}
- else alert(r.error||'失败');}
+ if(r.ok){TOKEN=r.token;localStorage.setItem('sim_token',TOKEN);boot();toast('注册成功：'+(r.note||''));}
+ else toast(r.error||'失败');}
 function logout(){TOKEN='';localStorage.removeItem('sim_token');boot();}
+function chart(trend){
+ const mx=Math.max(1,...trend.map(d=>d.clicks),...trend.map(d=>d.orders));
+ const cols=trend.map(d=>{const hc=Math.round(d.clicks/mx*100),ho=Math.round(d.orders/mx*100);
+  return `<div class="col"><span class="val">${d.clicks}/${d.orders}</span>
+   <div class="bar" style="height:${hc}%"></div><div class="bar o" style="height:${ho}%"></div>
+   <span class="lab">${d.date.slice(5)}</span></div>`}).join('');
+ return `<div class="legend"><span><i style="background:#2563eb"></i>点击</span>
+  <span><i style="background:#4ade80"></i>成交</span><span class="sp"></span>
+  <span>格式：点击/成交</span></div><div class="chart">${cols}</div>`;}
 async function boot(){
  if(!TOKEN){el('app').innerHTML=`
   <div class="card"><h3>登录 / 注册</h3>
@@ -830,44 +998,67 @@ async function boot(){
  const plans=(await api('/plans')).plans||[];
  const links=(await api('/link')).links||[];
  const com=await api('/commissions');
+ const ms=await api('/me-stats');
+ const mats=await api('/materials');
+ const wds=(await api('/withdrawals')).items||[];
+ const S=ms.stats||{},T=ms.trend||[];
  el('app').innerHTML=`
  <div class="card"><h3>我的推广员信息</h3>
   <div class="kpi"><div><b>${u.tier}</b><span>等级</span></div>
   <div><b>${u.balance}</b><span>可提现余额</span></div>
   <div><b>${u.total_sales}</b><span>累计推广单数</span></div>
-  <div><b>${u.total_commission}</b><span>累计佣金</span></div></div>
+  <div><b>${u.total_commission}</b><span>累计佣金</span></div>
+  <div><b>${S.today_clicks||0}</b><span>今日点击</span></div>
+  <div><b>${S.uv||0}</b><span>独立访客 UV</span></div>
+  <div><b>${(S.cvr*100||0).toFixed(1)}%</b><span>转化率</span></div></div>
   <div class="row muted">${u.name} · ${u.email} · ${u.status} · <button class="g" onclick="logout()">退出</button></div></div>
+ <div class="card"><h3>数据报表（近 7 日）</h3>${chart(T)}</div>
+ <div class="two">
  <div class="card"><h3>① 选品（可推广卡品）</h3><table>
   <tr><th>卡品</th><th>区域</th><th class="n">流量</th><th class="n">售价</th><th class="n">佣金率</th></tr>
-  ${plans.map(p=>`<tr><td>${p.title}</td><td>${p.region}</td><td class="n">${p.data_gb||'-'}GB</td>
+  ${plans.map(p=>`<tr><td>${esc(p.title)}</td><td>${esc(p.region)}</td><td class="n">${p.data_gb||'-'}GB</td>
    <td class="n">${p.price}</td><td class="n">${(p.cps_rate*100).toFixed(0)}%</td></tr>`).join('')}
  </table></div>
  <div class="card"><h3>② 我的专属推广链接</h3>
   ${links.map(l=>`<div class="row" style="border-bottom:1px solid #1e2740;padding-bottom:10px">
    <div class="qr">${l.qr}</div>
-   <div style="flex:1;min-width:240px"><b>${l.title}</b><br>
-   <a href="${l.url}" target="_blank">${l.url}</a><br>
+   <div style="flex:1;min-width:240px"><b>${esc(l.title)}</b><br>
+   <a href="${l.url}" target="_blank">${esc(l.url)}</a><br>
    <span class="muted">推广码 ${l.code} ｜ 售价 ${l.price} ｜ 佣金率 ${(l.cps_rate*100).toFixed(0)}%</span><br>
    <button class="g" onclick="copy('${l.url}')">复制链接</button></div></div>`).join('')}
+ </div></div>
+ <div class="card"><h3>③ 推广素材中心（一键复制话术）</h3>
+  ${(mats.items||[]).map(m=>`<div class="mat"><b>${esc(m.title)}</b>
+   ${m.texts.map(t=>`<div style="margin-top:10px"><span class="scene">${esc(t.scene)}</span>
+    <button class="g" onclick="copy(\`${t.text.replace(/`/g,'\\`')}\`)">复制</button>
+    <pre>${esc(t.text)}</pre></div>`).join('')}</div>`).join('')||'<div class="muted">暂无素材（先在上方生成推广链接）</div>'}
  </div>
- <div class="card"><h3>③ 我的收益</h3>
+ <div class="card"><h3>④ 我的收益</h3>
   <div class="kpi"><div><b>${com.summary?com.summary.count:0}</b><span>订单数</span></div>
   <div><b>${com.summary?com.summary.pending:0}</b><span>待结算</span></div>
-  <div><b>${com.summary?com.summary.settled:0}</b><span>已结算</span></div></div>
+  <div><b>${com.summary?com.summary.settled:0}</b><span>已结算</span></div>
+  <div><b>${S.rejected||0}</b><span>风控拦截</span></div></div>
   <table><tr><th>时间</th><th>卡品</th><th class="n">金额</th><th class="n">佣金</th><th>状态</th><th>风控</th></tr>
-  ${(com.orders||[]).slice().reverse().map(o=>`<tr><td>${o.ts.slice(5)}</td><td>${o.plan_title}</td>
+  ${(com.orders||[]).slice().reverse().map(o=>`<tr><td>${o.ts.slice(5)}</td><td>${esc(o.plan_title)}</td>
    <td class="n">${o.amount}</td><td class="n">${o.commission}</td>
    <td><span class="tag ${o.status==='rejected'?'t-bad':(o.status==='pending'?'t-warn':'t-ok')}">${o.status}</span></td>
-   <td class="muted">${(o.risk_reasons||[]).join('；')||'正常'}</td></tr>`).join('')}</table></div>
- <div class="card"><h3>④ 申请提现</h3>
+   <td class="muted">${esc((o.risk_reasons||[]).join('；')||'正常')}</td></tr>`).join('')}</table></div>
+ <div class="card"><h3>⑤ 申请提现</h3>
   <div class="row"><input id="wa" placeholder="金额" style="width:120px">
    <input id="wc" placeholder="渠道" value="支付宝" style="width:120px">
    <input id="wacc" placeholder="收款账号"><button onclick="wd()">提交申请</button></div>
-  <div class="muted" id="wmsg"></div></div>`;}
-function copy(t){navigator.clipboard&&navigator.clipboard.writeText(t);alert('已复制：'+t)}
+  <div class="muted">起提金额与手续费以平台配置为准；到账 = 金额 - 手续费。</div>
+  <div class="muted" id="wmsg"></div>
+  ${wds.length?`<table style="margin-top:10px"><tr><th>时间</th><th class="n">金额</th><th class="n">手续费</th>
+   <th class="n">实付</th><th>渠道</th><th>状态</th></tr>
+   ${wds.slice().reverse().map(w=>`<tr><td>${w.ts.slice(5)}</td><td class="n">${w.amount}</td>
+   <td class="n">${w.fee}</td><td class="n">${w.actual}</td><td>${esc(w.channel)}</td>
+   <td><span class="tag ${w.status==='approved'?'t-ok':(w.status==='rejected'?'t-bad':'t-warn')}">${w.status}</span></td>
+   </tr>`).join('')}</table>`:'<div class="muted" style="margin-top:8px">暂无提现记录</div>'}</div>`;}
 async function wd(){const r=await api('/withdraw',{method:'POST',body:JSON.stringify(
  {amount:parseFloat(el('wa').value),channel:el('wc').value,account:el('wacc').value})});
- el('wmsg').textContent=r.ok?'提现申请已提交，实付 '+(r.item?r.item.actual:''):(r.error||'失败');}
+ if(r.ok){toast('提现申请已提交，实付 '+(r.item?r.item.actual:''));boot();}
+ else el('wmsg').textContent=r.error||'失败';}
 boot();
 """
 
@@ -876,6 +1067,8 @@ const API='/api';let TOKEN=localStorage.getItem('sim_token')||'';
 async function api(p,o={}){o.headers=Object.assign({'Content-Type':'application/json'},o.headers||{});
  if(TOKEN)o.headers.Authorization='Bearer '+TOKEN;const r=await fetch(API+p,o);return r.json();}
 function el(id){return document.getElementById(id)}
+function toast(m){const t=el('toast');if(!t){alert(m);return;}t.textContent=m;t.style.display='block';
+ clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',1800);}
 async function login(){const r=await api('/login',{method:'POST',body:JSON.stringify(
  {email:el('le').value,password:el('lp').value})});
  if(r.ok){TOKEN=r.token;localStorage.setItem('sim_token',TOKEN);boot();}else alert(r.error||'失败');}
@@ -931,11 +1124,18 @@ async function boot(){
    <td>${r.detail||''}</td><td class="n">${r.score}</td>
    <td><span class="tag ${r.action==='reject'?'t-bad':(r.action==='review'?'t-warn':'t-ok')}">${r.action}</span></td></tr>`).join('')}
  </table></div>
- <div class="card"><h3>分佣配置</h3>
+ <div class="card"><h3>分佣与风控配置</h3>
   <div class="row"><span>最低提现额</span><input id="cmin" value="${cfg.withdraw_min}" style="width:100px">
    <span>提现手续费率</span><input id="cfee" value="${cfg.withdraw_fee_rate}" style="width:100px">
    <span>同IP点击上限</span><input id="cip" value="${(cfg.risk||{}).same_ip_click_max}" style="width:100px">
+   <span>同指纹点击上限</span><input id="cfp" value="${(cfg.risk||{}).same_fp_click_max}" style="width:100px"></div>
+  <div class="row"><span>转化率上限%</span><input id="ccvr" value="${Math.round(((cfg.risk||{}).cvr_max||0.25)*100)}" style="width:100px">
+   <span>推广员24h成交上限</span><input id="cday" value="${(cfg.risk||{}).same_day_order_max}" style="width:100px">
+   <span>自动拒单风控分</span><input id="crej" value="${(cfg.risk||{}).auto_reject_score}" style="width:100px"></div>
+  <div class="row"><span>IP黑名单（逗号分隔）</span>
+   <input id="cbl" value="${((cfg.risk||{}).ip_blacklist||[]).join(',')}" style="width:340px" placeholder="留空=不启用">
    <button onclick="savecfg()">保存</button></div>
+  <div class="muted">正常推广转化率 1%–8%；>25% 且订单≥8 笔判畸高。留空黑名单即关闭。</div>
   <pre>${JSON.stringify(cfg.tiers,null,1)}</pre></div>`;}
 async function settle(){const r=await api('/admin/settle',{method:'GET'});
  el('smsg').textContent=r.ok?('已结算 '+r.settled+' 单'):(r.error||'失败');boot();}
@@ -945,9 +1145,14 @@ async function wdo(id,act){await fetch('/api/admin/withdraw?id='+id+'&action='+a
  {headers:{Authorization:'Bearer '+TOKEN}});boot();}
 async function savecfg(){const risk=(await api('/config')).config.risk||{};
  risk.same_ip_click_max=parseInt(el('cip').value);
+ risk.same_fp_click_max=parseInt(el('cfp').value);
+ risk.cvr_max=parseFloat(el('ccvr').value)/100;
+ risk.same_day_order_max=parseInt(el('cday').value);
+ risk.auto_reject_score=parseInt(el('crej').value);
+ risk.ip_blacklist=(el('cbl').value||'').split(',').map(s=>s.trim()).filter(s=>s);
  await api('/admin/config',{method:'POST',body:JSON.stringify(
   {withdraw_min:parseFloat(el('cmin').value),withdraw_fee_rate:parseFloat(el('cfee').value),risk})});
- alert('已保存');}
+ toast('已保存');}
 boot();
 """
 
@@ -959,6 +1164,7 @@ def page(title, js, sub):
 <header><b>%s</b><span class="muted">%s</span><span class="sp"></span>
 <a href="/">推广员端</a> · <a href="/admin">管理后台</a></header>
 <div class="wrap"><div id="app"></div></div>
+<div id="toast"></div>
 <script>%s</script></body></html>""" % (title, CSS, title, sub, js)
 
 
