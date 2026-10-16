@@ -159,7 +159,8 @@ def main():
     af = workers[0]
     plan = plans[0]
     score, reasons, action = server.risk_check(
-        af, {"contact": af["email"]}, "198.51.100.7", "fp_self", None)
+        af, {"contact": af["email"]}, "198.51.100.7", "fp_self", None,
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126.0.0.0 Safari/537.36")
     orders.append({"id": "O" + str(random.randint(10000000, 99999999)), "ts": server.now(),
                    "affiliate_id": af["id"], "affiliate_name": af["name"],
                    "plan_id": plan["id"], "plan_title": plan["title"],
@@ -181,7 +182,8 @@ def main():
                        "ua": "python-requests/2.31", "affiliate_id": workers[1]["id"]})
     server.save("clicks", clicks)
     score, reasons, action = server.risk_check(
-        workers[1], {"contact": "spam@example.com"}, "198.51.100.99", "fp_spam", None)
+        workers[1], {"contact": "spam@example.com"}, "198.51.100.99", "fp_spam", None,
+        "python-requests/2.31")
     orders.append({"id": "O" + str(random.randint(10000000, 99999999)), "ts": server.now(),
                    "affiliate_id": workers[1]["id"], "affiliate_name": workers[1]["name"],
                    "plan_id": plan["id"], "plan_title": plan["title"],
