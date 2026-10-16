@@ -1,0 +1,927 @@
+{
+  "groups": {
+    "eSIM_转售_供给侧": {
+      "esim reseller platform": {
+        "error": "HTTPError: HTTP Error 403: Forbidden",
+        "items": []
+      },
+      "esim api reseller white label": {
+        "error": "HTTPError: HTTP Error 403: Forbidden",
+        "items": []
+      },
+      "esim store open source": {
+        "error": "HTTPError: HTTP Error 403: Forbidden",
+        "items": []
+      },
+      "virtual phone number reseller": {
+        "error": "HTTPError: HTTP Error 403: Forbidden",
+        "items": []
+      },
+      "sim card distribution system": {
+        "error": "HTTPError: HTTP Error 403: Forbidden",
+        "items": []
+      },
+      "mvno billing open source": {
+        "error": "HTTPError: HTTP Error 403: Forbidden",
+        "items": []
+      },
+      "telecom reseller platform": {
+        "error": "HTTPError: HTTP Error 403: Forbidden",
+        "items": []
+      },
+      "travel esim shop": {
+        "error": "HTTPError: HTTP Error 403: Forbidden",
+        "items": []
+      }
+    },
+    "联盟分销_平台层": {
+      "affiliate platform self hosted": {
+        "error": "HTTPError: HTTP Error 403: Forbidden",
+        "items": []
+      },
+      "affiliate tracking software open source": {
+        "error": "HTTPError: HTTP Error 403: Forbidden",
+        "items": []
+      },
+      "referral marketing platform": {
+        "error": "HTTPError: HTTP Error 403: Forbidden",
+        "items": []
+      },
+      "affiliate network software": {
+        "error": "HTTPError: HTTP Error 403: Forbidden",
+        "items": []
+      },
+      "affiliate program laravel": {
+        "error": "HTTPError: HTTP Error 403: Forbidden",
+        "items": []
+      },
+      "affiliate system django": {
+        "error": "URLError: <urlopen error [Errno 2] No such file or directory>",
+        "items": []
+      },
+      "cps commission platform": {
+        "error": "HTTPError: HTTP Error 403: Forbidden",
+        "items": []
+      },
+      "multi level marketing software open source": {
+        "error": "HTTPError: HTTP Error 403: Forbidden",
+        "items": []
+      }
+    },
+    "商业产品_开源替代": {
+      "rewardful alternative open source": {
+        "error": "HTTPError: HTTP Error 403: Forbidden",
+        "items": []
+      },
+      "tapfiliate alternative": {
+        "error": "HTTPError: HTTP Error 403: Forbidden",
+        "items": []
+      },
+      "post affiliate pro alternative open source": {
+        "items": []
+      },
+      "firstpromoter alternative self hosted": {
+        "items": [
+          {
+            "full_name": "ZAK123DSFDF/refearnapp",
+            "stars": 43,
+            "lang": "TypeScript",
+            "pushed": "2026-10-12",
+            "desc": "🚀 High-scale affiliate tracking & referral management. Open-source & self-hostable alternative to Rewardful, FirstPromoter, and Tolt. Built for speed with Next.",
+            "url": "https://github.com/ZAK123DSFDF/refearnapp",
+            "topics": [
+              "affiliate",
+              "affiliate-marketing",
+              "cloudflare-workers",
+              "docker",
+              "nextjs",
+              "open-source"
+            ],
+            "license": "AGPL-3.0"
+          }
+        ]
+      },
+      "refersion alternative open source": {
+        "items": []
+      },
+      "affiliatewp alternative plugin": {
+        "items": []
+      },
+      "partnerstack alternative open source": {
+        "items": []
+      },
+      "affiliate tracking python": {
+        "items": [
+          {
+            "full_name": "soldatov-ss/django-referral-system",
+            "stars": 56,
+            "lang": "Python",
+            "pushed": "2026-04-21",
+            "desc": "Django app for managing referral programs — promoters, referral tracking, commission payouts, Wise CSV export, and click analytics.",
+            "url": "https://github.com/soldatov-ss/django-referral-system",
+            "topics": [
+              "affiliate",
+              "django",
+              "promoter",
+              "python",
+              "referral",
+              "referral-program"
+            ],
+            "license": "MIT"
+          },
+          {
+            "full_name": "alphaparkinc/genpark-commerce-affiliate-tracking-skill",
+            "stars": 9,
+            "lang": "Python",
+            "pushed": "2026-07-10",
+            "desc": "Commerce affiliate conversion tracking and commission management skill.",
+            "url": "https://github.com/alphaparkinc/genpark-commerce-affiliate-tracking-skill",
+            "topics": [
+              "agent-skills",
+              "ai-agents",
+              "automation",
+              "claude",
+              "cursor",
+              "llm-tools"
+            ],
+            "license": null
+          },
+          {
+            "full_name": "dipakjad1993/Outbound-Affiliate-Link-Chain-Latency-Tracker",
+            "stars": 1,
+            "lang": "Python",
+            "pushed": "2026-09-14",
+            "desc": "Enterprise Outbound Affiliate Link Chain & Latency Tracker for iGaming: live multi-hop redirect tracing, tracking-parameter loss fingerprinting, geo latency pro",
+            "url": "https://github.com/dipakjad1993/Outbound-Affiliate-Link-Chain-Latency-Tracker",
+            "topics": [
+              "adblock-detection",
+              "affiliate-marketing",
+              "bot-mitigation",
+              "compliance-automation",
+              "deep-linking",
+              "edge-computing"
+            ],
+            "license": "MIT"
+          },
+          {
+            "full_name": "adigayung/AffiliEngine",
+            "stars": 1,
+            "lang": "Python",
+            "pushed": "2026-10-10",
+            "desc": "AffiliEngine is an all-in-one Python automation tool for TikTok affiliate marketing. It handles product analysis, automated video creation, smart scheduling, di",
+            "url": "https://github.com/adigayung/AffiliEngine",
+            "topics": [],
+            "license": "MIT"
+          },
+          {
+            "full_name": "mbel-tech/idtrackerai-detectron2",
+            "stars": 1,
+            "lang": "Python",
+            "pushed": "2026-10-10",
+            "desc": "A fork of idtracker.ai that takes animal outlines from a fine-tuned Detectron2 Mask R-CNN instead of intensity thresholding. Identity tracking unchanged. Unoffi",
+            "url": "https://github.com/mbel-tech/idtrackerai-detectron2",
+            "topics": [
+              "animal-behavior",
+              "animal-tracking",
+              "behavioral-neuroscience",
+              "computer-vision",
+              "deep-learning",
+              "detectron2"
+            ],
+            "license": "GPL-3.0"
+          },
+          {
+            "full_name": "bridgemekong/shopee-skill",
+            "stars": 1,
+            "lang": "Python",
+            "pushed": "2026-10-01",
+            "desc": "Model-agnostic skill (Thai + English) to connect a Shopee Affiliate/Shop account and auto-post tracked product links to TikTok, Instagram, Facebook, X, and Tele",
+            "url": "https://github.com/bridgemekong/shopee-skill",
+            "topics": [
+              "affiliate-marketing",
+              "ai-agent",
+              "automation",
+              "claude-skill",
+              "instagram",
+              "python"
+            ],
+            "license": "MIT"
+          },
+          {
+            "full_name": "Crow852/affiliates-crm",
+            "stars": 0,
+            "lang": "Python",
+            "pushed": "2026-05-26",
+            "desc": "CRM for affiliate management with Sankhya ERP integration and automated commission tracking",
+            "url": "https://github.com/Crow852/affiliates-crm",
+            "topics": [
+              "crm",
+              "erp-integration",
+              "fastapi",
+              "postgresql",
+              "python",
+              "railway"
+            ],
+            "license": null
+          },
+          {
+            "full_name": "Novatorius/siren-python",
+            "stars": 0,
+            "lang": "Python",
+            "pushed": "2026-07-20",
+            "desc": "Official Siren SDK for Python — affiliate & incentive tracking for any commerce stack.",
+            "url": "https://github.com/Novatorius/siren-python",
+            "topics": [
+              "affiliate",
+              "affiliate-marketing",
+              "ecommerce",
+              "incentives",
+              "python",
+              "referral"
+            ],
+            "license": "MIT"
+          },
+          {
+            "full_name": "mattywebdev/affiliate-site",
+            "stars": 0,
+            "lang": "Python",
+            "pushed": "2026-06-24",
+            "desc": "Full-stack Django affiliate review site with product listings, article system, and click tracking analytics.",
+            "url": "https://github.com/mattywebdev/affiliate-site",
+            "topics": [
+              "affiliate",
+              "api",
+              "css",
+              "django",
+              "full-stack",
+              "marketing"
+            ],
+            "license": "NOASSERTION"
+          },
+          {
+            "full_name": "aayodejii/django-affiliate-system",
+            "stars": 0,
+            "lang": "Python",
+            "pushed": "2026-03-29",
+            "desc": "A flexible, production-ready Django package for affiliate marketing. Referral tracking, commissions, and payouts.",
+            "url": "https://github.com/aayodejii/django-affiliate-system",
+            "topics": [
+              "affiliate",
+              "commission",
+              "django",
+              "djangorestframework",
+              "marketing",
+              "python"
+            ],
+            "license": "MIT"
+          }
+        ]
+      }
+    },
+    "电信_号码_计费": {
+      "telecom billing system open source": {
+        "items": []
+      },
+      "voip reseller platform": {
+        "items": [
+          {
+            "full_name": "BillTheBest/ASTPP",
+            "stars": 10,
+            "lang": "Perl",
+            "pushed": "2012-04-12",
+            "desc": "Open Source VOIP Billing Platform ASTPP is a billing solution for Freeswitch and Asterisk. It supports pre-paid and post-paid billing with call rating and credi",
+            "url": "https://github.com/BillTheBest/ASTPP",
+            "topics": [],
+            "license": "GPL-2.0"
+          }
+        ]
+      },
+      "sms gateway reseller billing": {
+        "items": []
+      },
+      "reseller panel open source": {
+        "items": [
+          {
+            "full_name": "tokenpanel/tokenpanel",
+            "stars": 9,
+            "lang": "TypeScript",
+            "pushed": "2026-10-13",
+            "desc": "Open-source AI reseller panel with customer API keys, prepaid balances, usage limits, model pricing, and profit analytics.",
+            "url": "https://github.com/tokenpanel/tokenpanel",
+            "topics": [
+              "ai-gateway",
+              "ai-proxy",
+              "ai-reseller",
+              "anthropic",
+              "anthropic-compatible",
+              "api-gateway"
+            ],
+            "license": "AGPL-3.0"
+          },
+          {
+            "full_name": "ExtremeSaves/Web-Hosting---Custom-newly-developed-cPanel-WHM",
+            "stars": 1,
+            "lang": null,
+            "pushed": "",
+            "desc": "Free and Open Source site software for resellers and server adminstrator to use, high quality, great desgin, professional developments.",
+            "url": "https://github.com/ExtremeSaves/Web-Hosting---Custom-newly-developed-cPanel-WHM",
+            "topics": [],
+            "license": null
+          },
+          {
+            "full_name": "MarioRiffoCortes/mod-whm",
+            "stars": 0,
+            "lang": "JavaScript",
+            "pushed": "2026-09-11",
+            "desc": "Panel open source para administrar múltiples servidores WHM/cPanel desde un solo lugar: listado de cuentas por servidor, cambio de clave, suspender/activar/elim",
+            "url": "https://github.com/MarioRiffoCortes/mod-whm",
+            "topics": [
+              "admin-panel",
+              "cpanel",
+              "hosting",
+              "open-source",
+              "php",
+              "reseller"
+            ],
+            "license": null
+          },
+          {
+            "full_name": "api-evangelist/virtualmin",
+            "stars": 0,
+            "lang": null,
+            "pushed": "2026-10-09",
+            "desc": "Virtualmin — independent third-party profile of a public API surface, by API Evangelist. Virtualmin is an open-source web hosting control panel for Linux and BS",
+            "url": "https://github.com/api-evangelist/virtualmin",
+            "topics": [
+              "apis-json",
+              "company",
+              "control-panel",
+              "databases",
+              "dns",
+              "domains"
+            ],
+            "license": null
+          }
+        ]
+      },
+      "whmcs reseller module": {
+        "items": [
+          {
+            "full_name": "EnduranceIndia/whmcs-resellerclub-modules",
+            "stars": 52,
+            "lang": "PHP",
+            "pushed": "2016-11-29",
+            "desc": "ResellerClub Product Modules for WHMCS",
+            "url": "https://github.com/EnduranceIndia/whmcs-resellerclub-modules",
+            "topics": [],
+            "license": null
+          },
+          {
+            "full_name": "Rad-Web-Hosting/whmcs-vps-reseller",
+            "stars": 29,
+            "lang": "PHP",
+            "pushed": "2026-04-27",
+            "desc": "WHMCS server module for reselling white-label VPS servers. Your end users will not only have VPS administration abilities from the WHMCS interface, thanks to ou",
+            "url": "https://github.com/Rad-Web-Hosting/whmcs-vps-reseller",
+            "topics": [
+              "cloud",
+              "integration",
+              "kvm-vps",
+              "provisioning",
+              "provisioning-api",
+              "public"
+            ],
+            "license": "MIT"
+          },
+          {
+            "full_name": "Rad-Web-Hosting/RadWebHosting",
+            "stars": 10,
+            "lang": "PHP",
+            "pushed": "2020-07-04",
+            "desc": "Domains Reseller module for WHMCS to integrate API functionality for resellers directly into their WHMCS installations. Simplifies the automation of registering",
+            "url": "https://github.com/Rad-Web-Hosting/RadWebHosting",
+            "topics": [
+              "api",
+              "domain",
+              "domain-registrars",
+              "domains-reseller",
+              "registration",
+              "reseller"
+            ],
+            "license": "MIT"
+          },
+          {
+            "full_name": "time4vps/whmcs",
+            "stars": 9,
+            "lang": "PHP",
+            "pushed": "2022-05-27",
+            "desc": "WHMCS Time4VPS reseller Module",
+            "url": "https://github.com/time4vps/whmcs",
+            "topics": [
+              "hosting",
+              "integration",
+              "module",
+              "reseller",
+              "vps",
+              "whmcs"
+            ],
+            "license": "MIT"
+          },
+          {
+            "full_name": "cipi-sh/whmcs",
+            "stars": 9,
+            "lang": "PHP",
+            "pushed": "2026-06-02",
+            "desc": "WHMCS integration module",
+            "url": "https://github.com/cipi-sh/whmcs",
+            "topics": [
+              "api",
+              "api-rest",
+              "automation",
+              "cipi",
+              "hosting",
+              "integration"
+            ],
+            "license": null
+          },
+          {
+            "full_name": "PlanetHoster/whmcs_module_registrar",
+            "stars": 7,
+            "lang": "PHP",
+            "pushed": "2025-11-20",
+            "desc": "PlanetHoster's module for WHMCS using our Domain Reseller API",
+            "url": "https://github.com/PlanetHoster/whmcs_module_registrar",
+            "topics": [],
+            "license": null
+          },
+          {
+            "full_name": "Rad-Web-Hosting/RadWebHosting-whmcs",
+            "stars": 7,
+            "lang": "PHP",
+            "pushed": "2026-03-04",
+            "desc": "Domains Reseller module for WHMCS to integrate API functionality for resellers directly into their WHMCS installations. Simplifies the automation of registering",
+            "url": "https://github.com/Rad-Web-Hosting/RadWebHosting-whmcs",
+            "topics": [
+              "dns",
+              "domain-registrar",
+              "domain-reseller",
+              "php",
+              "registrar-module",
+              "reseller-api"
+            ],
+            "license": "MIT"
+          },
+          {
+            "full_name": "hkadm/HostkeyResellerMod",
+            "stars": 7,
+            "lang": "PHP",
+            "pushed": "2026-07-06",
+            "desc": "Hostkey reseller module for WHMCS",
+            "url": "https://github.com/hkadm/HostkeyResellerMod",
+            "topics": [],
+            "license": null
+          },
+          {
+            "full_name": "LunaNode/lndynamic_whmcs",
+            "stars": 5,
+            "lang": "PHP",
+            "pushed": "2019-01-05",
+            "desc": "Luna Node Dynamic reseller module for WHMCS",
+            "url": "https://github.com/LunaNode/lndynamic_whmcs",
+            "topics": [],
+            "license": "GPL-3.0"
+          },
+          {
+            "full_name": "novoserve/whmcs-module",
+            "stars": 5,
+            "lang": "PHP",
+            "pushed": "2024-11-08",
+            "desc": "This provisioning module allows you as a reseller to offer your customers full server management.",
+            "url": "https://github.com/novoserve/whmcs-module",
+            "topics": [
+              "whmcs",
+              "whmcs-module"
+            ],
+            "license": "MIT"
+          }
+        ]
+      },
+      "subscription referral saas starter": {
+        "items": [
+          {
+            "full_name": "Sfedfcv/redesigned-pancake",
+            "stars": 268,
+            "lang": null,
+            "pushed": "2021-05-16",
+            "desc": "Skip to content github / docs Code Issues 80 Pull requests 35 Discussions Actions Projects 2 Security Insights Merge branch 'main' into 1862-Add-Travis-CI-migra",
+            "url": "https://github.com/Sfedfcv/redesigned-pancake",
+            "topics": [],
+            "license": null
+          }
+        ]
+      }
+    }
+  },
+  "ranked": [
+    {
+      "full_name": "Sfedfcv/redesigned-pancake",
+      "stars": 268,
+      "lang": null,
+      "pushed": "2021-05-16",
+      "desc": "Skip to content github / docs Code Issues 80 Pull requests 35 Discussions Actions Projects 2 Security Insights Merge branch 'main' into 1862-Add-Travis-CI-migra",
+      "url": "https://github.com/Sfedfcv/redesigned-pancake",
+      "topics": [],
+      "license": null
+    },
+    {
+      "full_name": "soldatov-ss/django-referral-system",
+      "stars": 56,
+      "lang": "Python",
+      "pushed": "2026-04-21",
+      "desc": "Django app for managing referral programs — promoters, referral tracking, commission payouts, Wise CSV export, and click analytics.",
+      "url": "https://github.com/soldatov-ss/django-referral-system",
+      "topics": [
+        "affiliate",
+        "django",
+        "promoter",
+        "python",
+        "referral",
+        "referral-program"
+      ],
+      "license": "MIT"
+    },
+    {
+      "full_name": "EnduranceIndia/whmcs-resellerclub-modules",
+      "stars": 52,
+      "lang": "PHP",
+      "pushed": "2016-11-29",
+      "desc": "ResellerClub Product Modules for WHMCS",
+      "url": "https://github.com/EnduranceIndia/whmcs-resellerclub-modules",
+      "topics": [],
+      "license": null
+    },
+    {
+      "full_name": "ZAK123DSFDF/refearnapp",
+      "stars": 43,
+      "lang": "TypeScript",
+      "pushed": "2026-10-12",
+      "desc": "🚀 High-scale affiliate tracking & referral management. Open-source & self-hostable alternative to Rewardful, FirstPromoter, and Tolt. Built for speed with Next.",
+      "url": "https://github.com/ZAK123DSFDF/refearnapp",
+      "topics": [
+        "affiliate",
+        "affiliate-marketing",
+        "cloudflare-workers",
+        "docker",
+        "nextjs",
+        "open-source"
+      ],
+      "license": "AGPL-3.0"
+    },
+    {
+      "full_name": "Rad-Web-Hosting/whmcs-vps-reseller",
+      "stars": 29,
+      "lang": "PHP",
+      "pushed": "2026-04-27",
+      "desc": "WHMCS server module for reselling white-label VPS servers. Your end users will not only have VPS administration abilities from the WHMCS interface, thanks to ou",
+      "url": "https://github.com/Rad-Web-Hosting/whmcs-vps-reseller",
+      "topics": [
+        "cloud",
+        "integration",
+        "kvm-vps",
+        "provisioning",
+        "provisioning-api",
+        "public"
+      ],
+      "license": "MIT"
+    },
+    {
+      "full_name": "BillTheBest/ASTPP",
+      "stars": 10,
+      "lang": "Perl",
+      "pushed": "2012-04-12",
+      "desc": "Open Source VOIP Billing Platform ASTPP is a billing solution for Freeswitch and Asterisk. It supports pre-paid and post-paid billing with call rating and credi",
+      "url": "https://github.com/BillTheBest/ASTPP",
+      "topics": [],
+      "license": "GPL-2.0"
+    },
+    {
+      "full_name": "Rad-Web-Hosting/RadWebHosting",
+      "stars": 10,
+      "lang": "PHP",
+      "pushed": "2020-07-04",
+      "desc": "Domains Reseller module for WHMCS to integrate API functionality for resellers directly into their WHMCS installations. Simplifies the automation of registering",
+      "url": "https://github.com/Rad-Web-Hosting/RadWebHosting",
+      "topics": [
+        "api",
+        "domain",
+        "domain-registrars",
+        "domains-reseller",
+        "registration",
+        "reseller"
+      ],
+      "license": "MIT"
+    },
+    {
+      "full_name": "alphaparkinc/genpark-commerce-affiliate-tracking-skill",
+      "stars": 9,
+      "lang": "Python",
+      "pushed": "2026-07-10",
+      "desc": "Commerce affiliate conversion tracking and commission management skill.",
+      "url": "https://github.com/alphaparkinc/genpark-commerce-affiliate-tracking-skill",
+      "topics": [
+        "agent-skills",
+        "ai-agents",
+        "automation",
+        "claude",
+        "cursor",
+        "llm-tools"
+      ],
+      "license": null
+    },
+    {
+      "full_name": "tokenpanel/tokenpanel",
+      "stars": 9,
+      "lang": "TypeScript",
+      "pushed": "2026-10-13",
+      "desc": "Open-source AI reseller panel with customer API keys, prepaid balances, usage limits, model pricing, and profit analytics.",
+      "url": "https://github.com/tokenpanel/tokenpanel",
+      "topics": [
+        "ai-gateway",
+        "ai-proxy",
+        "ai-reseller",
+        "anthropic",
+        "anthropic-compatible",
+        "api-gateway"
+      ],
+      "license": "AGPL-3.0"
+    },
+    {
+      "full_name": "time4vps/whmcs",
+      "stars": 9,
+      "lang": "PHP",
+      "pushed": "2022-05-27",
+      "desc": "WHMCS Time4VPS reseller Module",
+      "url": "https://github.com/time4vps/whmcs",
+      "topics": [
+        "hosting",
+        "integration",
+        "module",
+        "reseller",
+        "vps",
+        "whmcs"
+      ],
+      "license": "MIT"
+    },
+    {
+      "full_name": "cipi-sh/whmcs",
+      "stars": 9,
+      "lang": "PHP",
+      "pushed": "2026-06-02",
+      "desc": "WHMCS integration module",
+      "url": "https://github.com/cipi-sh/whmcs",
+      "topics": [
+        "api",
+        "api-rest",
+        "automation",
+        "cipi",
+        "hosting",
+        "integration"
+      ],
+      "license": null
+    },
+    {
+      "full_name": "PlanetHoster/whmcs_module_registrar",
+      "stars": 7,
+      "lang": "PHP",
+      "pushed": "2025-11-20",
+      "desc": "PlanetHoster's module for WHMCS using our Domain Reseller API",
+      "url": "https://github.com/PlanetHoster/whmcs_module_registrar",
+      "topics": [],
+      "license": null
+    },
+    {
+      "full_name": "Rad-Web-Hosting/RadWebHosting-whmcs",
+      "stars": 7,
+      "lang": "PHP",
+      "pushed": "2026-03-04",
+      "desc": "Domains Reseller module for WHMCS to integrate API functionality for resellers directly into their WHMCS installations. Simplifies the automation of registering",
+      "url": "https://github.com/Rad-Web-Hosting/RadWebHosting-whmcs",
+      "topics": [
+        "dns",
+        "domain-registrar",
+        "domain-reseller",
+        "php",
+        "registrar-module",
+        "reseller-api"
+      ],
+      "license": "MIT"
+    },
+    {
+      "full_name": "hkadm/HostkeyResellerMod",
+      "stars": 7,
+      "lang": "PHP",
+      "pushed": "2026-07-06",
+      "desc": "Hostkey reseller module for WHMCS",
+      "url": "https://github.com/hkadm/HostkeyResellerMod",
+      "topics": [],
+      "license": null
+    },
+    {
+      "full_name": "LunaNode/lndynamic_whmcs",
+      "stars": 5,
+      "lang": "PHP",
+      "pushed": "2019-01-05",
+      "desc": "Luna Node Dynamic reseller module for WHMCS",
+      "url": "https://github.com/LunaNode/lndynamic_whmcs",
+      "topics": [],
+      "license": "GPL-3.0"
+    },
+    {
+      "full_name": "novoserve/whmcs-module",
+      "stars": 5,
+      "lang": "PHP",
+      "pushed": "2024-11-08",
+      "desc": "This provisioning module allows you as a reseller to offer your customers full server management.",
+      "url": "https://github.com/novoserve/whmcs-module",
+      "topics": [
+        "whmcs",
+        "whmcs-module"
+      ],
+      "license": "MIT"
+    },
+    {
+      "full_name": "dipakjad1993/Outbound-Affiliate-Link-Chain-Latency-Tracker",
+      "stars": 1,
+      "lang": "Python",
+      "pushed": "2026-09-14",
+      "desc": "Enterprise Outbound Affiliate Link Chain & Latency Tracker for iGaming: live multi-hop redirect tracing, tracking-parameter loss fingerprinting, geo latency pro",
+      "url": "https://github.com/dipakjad1993/Outbound-Affiliate-Link-Chain-Latency-Tracker",
+      "topics": [
+        "adblock-detection",
+        "affiliate-marketing",
+        "bot-mitigation",
+        "compliance-automation",
+        "deep-linking",
+        "edge-computing"
+      ],
+      "license": "MIT"
+    },
+    {
+      "full_name": "adigayung/AffiliEngine",
+      "stars": 1,
+      "lang": "Python",
+      "pushed": "2026-10-10",
+      "desc": "AffiliEngine is an all-in-one Python automation tool for TikTok affiliate marketing. It handles product analysis, automated video creation, smart scheduling, di",
+      "url": "https://github.com/adigayung/AffiliEngine",
+      "topics": [],
+      "license": "MIT"
+    },
+    {
+      "full_name": "mbel-tech/idtrackerai-detectron2",
+      "stars": 1,
+      "lang": "Python",
+      "pushed": "2026-10-10",
+      "desc": "A fork of idtracker.ai that takes animal outlines from a fine-tuned Detectron2 Mask R-CNN instead of intensity thresholding. Identity tracking unchanged. Unoffi",
+      "url": "https://github.com/mbel-tech/idtrackerai-detectron2",
+      "topics": [
+        "animal-behavior",
+        "animal-tracking",
+        "behavioral-neuroscience",
+        "computer-vision",
+        "deep-learning",
+        "detectron2"
+      ],
+      "license": "GPL-3.0"
+    },
+    {
+      "full_name": "bridgemekong/shopee-skill",
+      "stars": 1,
+      "lang": "Python",
+      "pushed": "2026-10-01",
+      "desc": "Model-agnostic skill (Thai + English) to connect a Shopee Affiliate/Shop account and auto-post tracked product links to TikTok, Instagram, Facebook, X, and Tele",
+      "url": "https://github.com/bridgemekong/shopee-skill",
+      "topics": [
+        "affiliate-marketing",
+        "ai-agent",
+        "automation",
+        "claude-skill",
+        "instagram",
+        "python"
+      ],
+      "license": "MIT"
+    },
+    {
+      "full_name": "ExtremeSaves/Web-Hosting---Custom-newly-developed-cPanel-WHM",
+      "stars": 1,
+      "lang": null,
+      "pushed": "",
+      "desc": "Free and Open Source site software for resellers and server adminstrator to use, high quality, great desgin, professional developments.",
+      "url": "https://github.com/ExtremeSaves/Web-Hosting---Custom-newly-developed-cPanel-WHM",
+      "topics": [],
+      "license": null
+    },
+    {
+      "full_name": "Crow852/affiliates-crm",
+      "stars": 0,
+      "lang": "Python",
+      "pushed": "2026-05-26",
+      "desc": "CRM for affiliate management with Sankhya ERP integration and automated commission tracking",
+      "url": "https://github.com/Crow852/affiliates-crm",
+      "topics": [
+        "crm",
+        "erp-integration",
+        "fastapi",
+        "postgresql",
+        "python",
+        "railway"
+      ],
+      "license": null
+    },
+    {
+      "full_name": "Novatorius/siren-python",
+      "stars": 0,
+      "lang": "Python",
+      "pushed": "2026-07-20",
+      "desc": "Official Siren SDK for Python — affiliate & incentive tracking for any commerce stack.",
+      "url": "https://github.com/Novatorius/siren-python",
+      "topics": [
+        "affiliate",
+        "affiliate-marketing",
+        "ecommerce",
+        "incentives",
+        "python",
+        "referral"
+      ],
+      "license": "MIT"
+    },
+    {
+      "full_name": "mattywebdev/affiliate-site",
+      "stars": 0,
+      "lang": "Python",
+      "pushed": "2026-06-24",
+      "desc": "Full-stack Django affiliate review site with product listings, article system, and click tracking analytics.",
+      "url": "https://github.com/mattywebdev/affiliate-site",
+      "topics": [
+        "affiliate",
+        "api",
+        "css",
+        "django",
+        "full-stack",
+        "marketing"
+      ],
+      "license": "NOASSERTION"
+    },
+    {
+      "full_name": "aayodejii/django-affiliate-system",
+      "stars": 0,
+      "lang": "Python",
+      "pushed": "2026-03-29",
+      "desc": "A flexible, production-ready Django package for affiliate marketing. Referral tracking, commissions, and payouts.",
+      "url": "https://github.com/aayodejii/django-affiliate-system",
+      "topics": [
+        "affiliate",
+        "commission",
+        "django",
+        "djangorestframework",
+        "marketing",
+        "python"
+      ],
+      "license": "MIT"
+    },
+    {
+      "full_name": "MarioRiffoCortes/mod-whm",
+      "stars": 0,
+      "lang": "JavaScript",
+      "pushed": "2026-09-11",
+      "desc": "Panel open source para administrar múltiples servidores WHM/cPanel desde un solo lugar: listado de cuentas por servidor, cambio de clave, suspender/activar/elim",
+      "url": "https://github.com/MarioRiffoCortes/mod-whm",
+      "topics": [
+        "admin-panel",
+        "cpanel",
+        "hosting",
+        "open-source",
+        "php",
+        "reseller"
+      ],
+      "license": null
+    },
+    {
+      "full_name": "api-evangelist/virtualmin",
+      "stars": 0,
+      "lang": null,
+      "pushed": "2026-10-09",
+      "desc": "Virtualmin — independent third-party profile of a public API surface, by API Evangelist. Virtualmin is an open-source web hosting control panel for Linux and BS",
+      "url": "https://github.com/api-evangelist/virtualmin",
+      "topics": [
+        "apis-json",
+        "company",
+        "control-panel",
+        "databases",
+        "dns",
+        "domains"
+      ],
+      "license": null
+    }
+  ],
+  "total_unique": 27
+}
